@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}{{ category.name }}{% endblock %}
+{% block content %}
+<p><a href="{{ url_for('category.displayCategoryList') }}">← All categories</a></p>
+<h1>{{ category.name }}</h1>
+<p class="sub">Category #{{ category.categoryId }}</p>
+<div class="card">
+  <dl class="details">
+    <dt>Description</dt><dd>{{ category.description }}</dd>
+    <dt>Projects filed</dt><dd>{{ category.idpCount }}</dd>
+    <dt>Created</dt><dd>{{ category.createdAt }}</dd>
+  </dl>
+  <div class="actions">
+    <a class="btn" href="{{ url_for('category.displayUpdateForm', categoryId=category.categoryId) }}">Update</a>
+    {% if canDelete %}
+    <form class="inline" method="post" action="{{ url_for('category.deleteCategory', categoryId=category.categoryId) }}"
+          onsubmit="return confirm('Delete this category? This cannot be undone.');">
+      <button class="btn danger" type="submit">Delete</button>
+    </form>
+    {% endif %}
+  </div>
+  {% if not canDelete %}<p class="hint">{{ reason }}</p>{% endif %}
+</div>
+{% endblock %}

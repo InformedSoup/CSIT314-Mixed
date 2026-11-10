@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% from "_macros.html" import idp_image, status_badge %}
+{% block title %}{{ idp.title }}{% endblock %}
+{% block content %}
+{% set prefix = 'Current' if kind == 'current' else 'Past' %}
+<p><a href="{{ url_for('idp.display' ~ prefix ~ 'IDPs') }}">← {{ 'Current projects' if kind == 'current' else 'Past portfolio' }}</a></p>
+<div class="two-col">
+  <div class="card" style="padding:0; overflow:hidden">{{ idp_image(idp, 320) }}</div>
+  <div>
+    <h1>{{ idp.title }}</h1>
+    <p class="sub">{{ status_badge(idp) }}</p>
+    <div class="card">
+      <dl class="details">
+        <dt>Client</dt><dd>{{ idp.clientName }}</dd>
+        <dt>Category</dt><dd>{{ idp.categoryName or 'Uncategorised' }}</dd>
+        <dt>Design style</dt><dd>{{ idp.designStyle or '—' }}</dd>
+        {% if kind == 'current' %}
+        <dt>Progress</dt><dd><div class="progress"><div style="width:{{ idp.progress }}%"></div></div>{{ idp.progress }}%</dd>
+        {% else %}
+        <dt>Completed</dt><dd>{{ idp.completionDate }}</dd>
+        {% endif %}
+        <dt>Views</dt><dd>{{ idp.viewCount }}</dd>
+        <dt>Shortlisted</dt><dd>{{ idp.shortlistCount }} time{{ '' if idp.shortlistCount == 1 else 's' }}</dd>
+      </dl>
+      <div class="actions">
+        <a class="btn" href="{{ url_for('idp.displayUpdate' ~ prefix ~ 'Form', idpId=idp.idpId) }}">Update</a>
+        <a class="btn danger" href="{{ url_for('idp.displayDelete' ~ prefix, idpId=idp.idpId) }}">Delete</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card" style="margin-top:22px">
+  <h3 style="margin-top:0">About this project</h3>
+  <p style="white-space:pre-line; margin-bottom:0">{{ idp.description }}</p>
+</div>
+{% if kind == 'current' %}
+<div class="card" style="margin-top:22px">
+  <h3 style="margin-top:0">Finished this project?</h3>
+  <form method="post" action="{{ url_for('idp.markCurrentCompleted', idpId=idp.idpId) }}" class="filters">
+    <input type="date" name="completionDate" value="{{ today }}" max="{{ today }}" required>
+    <button class="btn ghost" type="submit">Mark completed</button>
+  </form>
+  <p class="hint">It moves to your past portfolio; its views and shortlists are kept.</p>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Delete {{ idp.title }}{% endblock %}
+{% block content %}
+{% set prefix = 'Current' if kind == 'current' else 'Past' %}
+<p><a href="{{ url_for('idp.display' ~ prefix ~ 'IDP', idpId=idp.idpId) }}">← Back to project</a></p>
+<h1>Delete this project?</h1>
+<p class="sub"><strong>{{ idp.title }}</strong> will be removed for good, along with its {{ idp.viewCount }} views and {{ idp.shortlistCount }} shortlists. Customers who saved it will lose it from their favourites.</p>
+<div class="card" style="max-width:600px">
+  <form method="post" class="actions" style="margin-top:0">
+    <button class="btn danger" type="submit">Yes, delete</button>
+    <a class="btn ghost" href="{{ url_for('idp.display' ~ prefix ~ 'IDP', idpId=idp.idpId) }}">Cancel</a>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}{{ company.companyName }}{% endblock %}
+{% block content %}
+<p><a href="{{ url_for('company.displayMyCompanies') }}">← My companies</a></p>
+<h1>{{ company.companyName }}</h1>
+<p class="sub">UEN {{ company.regNumber }}</p>
+<div class="card">
+  <dl class="details">
+    <dt>About</dt><dd>{{ company.description }}</dd>
+    <dt>Address</dt><dd>{{ company.address }}</dd>
+    <dt>Contact number</dt><dd>{{ company.contactNumber }}</dd>
+    <dt>Added</dt><dd>{{ company.createdAt }}</dd>
+  </dl>
+  <div class="actions">
+    <a class="btn" href="{{ url_for('company.displayUpdateForm', companyId=company.companyId) }}">Update</a>
+    <a class="btn danger" href="{{ url_for('company.displayDeleteConfirmation', companyId=company.companyId) }}">Delete</a>
+  </div>
+</div>
+{% endblock %}

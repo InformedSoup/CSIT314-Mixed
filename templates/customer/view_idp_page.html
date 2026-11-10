@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% from "_macros.html" import idp_image, status_badge %}
+{% block title %}{{ idp.title }}{% endblock %}
+{% block content %}
+{% if fromFavourites %}
+<p><a href="{{ url_for('customer.displayFavourites') }}">← My favourites</a></p>
+{% else %}
+<p><a href="{{ url_for('customer.displaySearchPage') }}">← Back to search</a></p>
+{% endif %}
+<div class="two-col">
+  <div class="card" style="padding:0; overflow:hidden">{{ idp_image(idp, 340) }}</div>
+  <div>
+    <h1>{{ idp.title }}</h1>
+    <p class="sub">{{ status_badge(idp) }}</p>
+    <div class="card">
+      <dl class="details">
+        <dt>Designer</dt><dd>{{ idp.designerName }}</dd>
+        <dt>Category</dt><dd>{{ idp.categoryName or 'Uncategorised' }}</dd>
+        <dt>Design style</dt><dd>{{ idp.designStyle or '—' }}</dd>
+        {% if idp.status == 'PAST' %}<dt>Completed</dt><dd>{{ idp.completionDate }}</dd>
+        {% else %}<dt>Progress</dt><dd><div class="progress"><div style="width:{{ idp.progress }}%"></div></div>{{ idp.progress }}%</dd>{% endif %}
+      </dl>
+      <div class="actions">
+        {% if saved %}
+        <form class="inline" method="post" action="{{ url_for('customer.removeFromFavourites', idpId=idp.idpId) }}">
+          <input type="hidden" name="next" value="{{ request.path }}">
+          <button class="btn ghost" type="submit">★ Saved · Remove</button>
+        </form>
+        {% else %}
+        <form class="inline" method="post" action="{{ url_for('customer.saveToFavourites', idpId=idp.idpId) }}">
+          <button class="btn" type="submit">☆ Save to favourites</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card" style="margin-top:22px">
+  <h3 style="margin-top:0">About this project</h3>
+  <p style="white-space:pre-line; margin-bottom:0">{{ idp.description }}</p>
+</div>
+{% if companies %}
+<div class="card" style="margin-top:22px">
+  <h3 style="margin-top:0">Contact the designer</h3>
+  {% for c in companies %}
+  <dl class="details" style="margin-bottom:14px">
+    <dt>Company</dt><dd><strong>{{ c.companyName }}</strong> <span class="muted">· UEN {{ c.regNumber }}</span></dd>
+    <dt>About</dt><dd>{{ c.description }}</dd>
+    <dt>Address</dt><dd>{{ c.address }}</dd>
+    <dt>Phone</dt><dd>{{ c.contactNumber }}</dd>
+  </dl>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

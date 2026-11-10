@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}My Companies{% endblock %}
+{% block content %}
+<h1>My Companies</h1>
+<p class="sub">{{ companies|length }} compan{{ 'y' if companies|length == 1 else 'ies' }}{% if keyword %} matching “{{ keyword }}”{% endif %}</p>
+<div class="row">
+  <form class="search" method="get">
+    <input name="q" value="{{ keyword }}" placeholder="Search name, UEN or address">
+    <button class="btn ghost" type="submit">Search</button>
+    {% if keyword %}<a class="btn ghost" href="{{ url_for('company.displayMyCompanies') }}">Clear</a>{% endif %}
+  </form>
+  <a class="btn" href="{{ url_for('company.displayCreateForm') }}">+ Add company</a>
+</div>
+<div class="card">
+  {% if companies %}
+  <table>
+    <thead><tr><th>Company</th><th>UEN</th><th>Contact</th><th>Address</th><th></th></tr></thead>
+    <tbody>
+    {% for c in companies %}
+      <tr>
+        <td>{{ c.companyName }}</td>
+        <td>{{ c.regNumber }}</td>
+        <td>{{ c.contactNumber }}</td>
+        <td>{{ c.address }}</td>
+        <td><a href="{{ url_for('company.displayCompanyInfo', companyId=c.companyId) }}">View</a></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% elif keyword %}
+  <div class="empty">No matching company records found.</div>
+  {% else %}
+  <div class="empty">You haven't added any company information yet.<br><br>
+    <a class="btn" href="{{ url_for('company.displayCreateForm') }}">Add your first company</a></div>
+  {% endif %}
+</div>
+{% endblock %}

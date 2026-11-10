@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}User Profiles{% endblock %}
+{% block content %}
+<h1>User Profiles</h1>
+<p class="sub">{{ profiles|length }} profile{{ '' if profiles|length == 1 else 's' }}{% if keyword %} matching “{{ keyword }}”{% endif %}</p>
+<div class="row">
+  <form class="search" method="get">
+    <input name="q" value="{{ keyword }}" placeholder="Search name, description or role">
+    <button class="btn ghost" type="submit">Search</button>
+    {% if keyword %}<a class="btn ghost" href="{{ url_for('user_profile.displayProfileList') }}">Clear</a>{% endif %}
+  </form>
+  <a class="btn" href="{{ url_for('user_profile.displayCreateForm') }}">+ Create profile</a>
+</div>
+<div class="card">
+  {% if profiles %}
+  <table>
+    <thead><tr><th>ID</th><th>Profile</th><th>Role</th><th>Accounts</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+    {% for p in profiles %}
+      <tr>
+        <td>{{ p.profileId }}</td>
+        <td>{{ p.profileName }}<div class="muted" style="font-size:13px">{{ p.description }}</div></td>
+        <td>{{ p.roleLabel }}</td>
+        <td>{{ p.accountCount }}</td>
+        <td><span class="badge {{ p.status }}">{{ p.status }}</span></td>
+        <td><a href="{{ url_for('user_profile.displayProfileDetail', profileId=p.profileId) }}">View</a></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">No matching user profiles found.</div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% from "_macros.html" import idp_image, status_badge %}
+{% block title %}My favourites{% endblock %}
+{% block content %}
+<h1>My favourites</h1>
+<p class="sub">{{ favourites|length }} saved project{{ '' if favourites|length == 1 else 's' }}</p>
+{% if favourites %}
+<div class="grid">
+  {% for idp in favourites %}
+  <div class="idp-card">
+    <a href="{{ url_for('customer.displayFavouriteIDP', idpId=idp.idpId) }}" style="color:inherit; text-decoration:none">
+      {{ idp_image(idp, 150) }}
+      <div class="body">
+        <div class="title">{{ idp.title }}</div>
+        <div class="meta">by {{ idp.designerName }} · {{ idp.categoryName or 'Uncategorised' }}</div>
+        <div>{{ status_badge(idp) }}</div>
+      </div>
+    </a>
+    <form method="post" action="{{ url_for('customer.removeFromFavourites', idpId=idp.idpId) }}" style="padding:0 14px 14px">
+      <button class="btn ghost" type="submit" style="font-size:13px; padding:4px 10px">Remove</button>
+    </form>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card empty">You haven't saved any projects yet.<br><br>
+  <a class="btn" href="{{ url_for('customer.displaySearchPage') }}">Find design projects</a></div>
+{% endif %}
+{% endblock %}

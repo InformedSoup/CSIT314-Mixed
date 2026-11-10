@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Update' if company else 'Add' }} company{% endblock %}
+{% block content %}
+{% if company %}
+<p><a href="{{ url_for('company.displayCompanyInfo', companyId=company.companyId) }}">← Back to company</a></p>
+<h1>Update company information</h1>
+<p class="sub">{{ company.companyName }}</p>
+{% else %}
+<p><a href="{{ url_for('company.displayMyCompanies') }}">← My companies</a></p>
+<h1>Add company information</h1>
+<p class="sub">Customers see these details on your design projects.</p>
+{% endif %}
+<div class="card" style="max-width:600px">
+  <form method="post">
+    <label for="companyName">Company name</label>
+    <input id="companyName" name="companyName" value="{{ form.companyName or '' }}" required>
+    <label for="regNumber">Registration number (UEN)</label>
+    <input id="regNumber" name="regNumber" value="{{ form.regNumber or '' }}" placeholder="e.g. 201912345K" required>
+    <label for="description">Description</label>
+    <input id="description" name="description" value="{{ form.description or '' }}" required>
+    <label for="address">Address</label>
+    <input id="address" name="address" value="{{ form.address or '' }}" required>
+    <label for="contactNumber">Contact number</label>
+    <input id="contactNumber" name="contactNumber" value="{{ form.contactNumber or '' }}" placeholder="e.g. 6123 4567" required>
+    <div class="actions"><button class="btn" type="submit">{{ 'Save changes' if company else 'Add company' }}</button></div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Log in{% endblock %}
+{% block content %}
+<div class="login-wrap">
+  <div class="card">
+    <h1>Log in</h1>
+    <p class="sub">Interior Design Matching Platform</p>
+    <form method="post" action="{{ url_for('login.submitLogin') }}">
+      <label for="username">Username</label>
+      <input id="username" name="username" value="{{ username or '' }}" autocomplete="username" required autofocus>
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required>
+      <div class="actions"><button class="btn" type="submit">Log in</button></div>
+    </form>
+  </div>
+</div>
+{% endblock %}

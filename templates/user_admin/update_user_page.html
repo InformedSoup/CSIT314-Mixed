@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Update {{ account.username }}{% endblock %}
+{% block content %}
+<p><a href="{{ url_for('user_account.displayUserDetails', userId=account.userId) }}">← Back to account</a></p>
+<h1>Update user account</h1>
+<p class="sub">{{ account.username }} · account #{{ account.userId }}</p>
+<div class="card" style="max-width:560px">
+  <form method="post">
+    <label for="fullName">Full name</label>
+    <input id="fullName" name="fullName" value="{{ form.fullName or '' }}" required>
+    <label for="email">Email</label>
+    <input id="email" name="email" type="email" value="{{ form.email or '' }}" required>
+    <label for="profileId">User profile</label>
+    <select id="profileId" name="profileId" required>
+      {% for p in profiles %}
+        <option value="{{ p.profileId }}" {% if form.profileId|string == p.profileId|string %}selected{% endif %}>{{ p.profileName }}</option>
+      {% endfor %}
+    </select>
+    <label for="newPassword">New password <span class="muted">(leave blank to keep current)</span></label>
+    <input id="newPassword" name="newPassword" type="password" minlength="6">
+    <div class="actions"><button class="btn" type="submit">Save changes</button></div>
+  </form>
+</div>
+{% endblock %}

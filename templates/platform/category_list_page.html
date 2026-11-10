@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}IDP Categories{% endblock %}
+{% block content %}
+<h1>IDP Categories</h1>
+<p class="sub">{{ categories|length }} categor{{ 'y' if categories|length == 1 else 'ies' }}{% if keyword %} matching “{{ keyword }}”{% endif %}</p>
+<div class="row">
+  <form class="search" method="get">
+    <input name="q" value="{{ keyword }}" placeholder="Search name or description">
+    <button class="btn ghost" type="submit">Search</button>
+    {% if keyword %}<a class="btn ghost" href="{{ url_for('category.displayCategoryList') }}">Clear</a>{% endif %}
+  </form>
+  <a class="btn" href="{{ url_for('category.displayCreateForm') }}">+ Create category</a>
+</div>
+<div class="card">
+  {% if categories %}
+  <table>
+    <thead><tr><th>Category</th><th>Description</th><th>IDPs</th><th class="nowrap">Created</th><th></th></tr></thead>
+    <tbody>
+    {% for c in categories %}
+      <tr>
+        <td>{{ c.name }}</td><td>{{ c.description }}</td><td>{{ c.idpCount }}</td>
+        <td class="nowrap">{{ c.createdAt[:10] }}</td>
+        <td><a href="{{ url_for('category.displayCategoryDetails', categoryId=c.categoryId) }}">View</a></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">No categories found.</div>
+  {% endif %}
+</div>
+{% endblock %}

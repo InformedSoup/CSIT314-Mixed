@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}{{ account.username }}{% endblock %}
+{% block content %}
+<p><a href="{{ url_for('user_account.displayUserList') }}">← All accounts</a></p>
+<h1>{{ account.fullName }}</h1>
+<p class="sub">Account #{{ account.userId }}</p>
+<div class="card">
+  <dl class="details">
+    <dt>Username</dt><dd>{{ account.username }}</dd>
+    <dt>Email</dt><dd>{{ account.email }}</dd>
+    <dt>User profile</dt><dd>{{ account.profileName }}</dd>
+    <dt>Status</dt><dd><span class="badge {{ account.status }}">{{ account.status }}</span></dd>
+    <dt>Created</dt><dd>{{ account.createdAt }}</dd>
+  </dl>
+  <div class="actions">
+    <a class="btn" href="{{ url_for('user_account.displayUpdateForm', userId=account.userId) }}">Update</a>
+    {% if account.status == 'ACTIVE' %}
+      <form class="inline" method="post" action="{{ url_for('user_account.suspendUser', userId=account.userId) }}">
+        <button class="btn danger" type="submit">Suspend</button>
+      </form>
+    {% else %}
+      <form class="inline" method="post" action="{{ url_for('user_account.reactivateUser', userId=account.userId) }}">
+        <button class="btn ghost" type="submit">Reactivate</button>
+      </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

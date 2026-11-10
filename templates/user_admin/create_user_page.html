@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Create account{% endblock %}
+{% block content %}
+<p><a href="{{ url_for('user_account.displayUserList') }}">← All accounts</a></p>
+<h1>Create user account</h1>
+<p class="sub">New users can log in straight away.</p>
+<div class="card" style="max-width:560px">
+  <form method="post">
+    <label for="fullName">Full name</label>
+    <input id="fullName" name="fullName" value="{{ form.fullName or '' }}" required>
+    <label for="username">Username</label>
+    <input id="username" name="username" value="{{ form.username or '' }}" required>
+    <label for="email">Email</label>
+    <input id="email" name="email" type="email" value="{{ form.email or '' }}" required>
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" minlength="6" required>
+    <label for="profileId">User profile</label>
+    <select id="profileId" name="profileId" required>
+      <option value="">Choose a profile</option>
+      {% for p in profiles %}
+        <option value="{{ p.profileId }}" {% if form.profileId|string == p.profileId|string %}selected{% endif %}>{{ p.profileName }}</option>
+      {% endfor %}
+    </select>
+    <div class="actions"><button class="btn" type="submit">Create account</button></div>
+  </form>
+</div>
+{% endblock %}

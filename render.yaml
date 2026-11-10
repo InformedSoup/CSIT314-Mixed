@@ -1,0 +1,14 @@
+# Render blueprint: a free web service running the Flask app with fresh demo data.
+services:
+  - type: web
+    name: interior-match
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt && python seed_data.py
+    startCommand: gunicorn "app:create_app()"
+    autoDeploy: false            # deploys come from GitHub Actions, only after tests pass
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PYTHON_VERSION
+        value: 3.12.7

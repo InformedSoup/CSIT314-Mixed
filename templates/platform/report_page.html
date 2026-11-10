@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<h1>Platform reports</h1>
+<p class="sub">Activity across accounts, projects, views and shortlists</p>
+<div class="tabs">
+  <a href="?type=daily" class="{{ 'on' if kind == 'daily' }}">Daily</a>
+  <a href="?type=weekly" class="{{ 'on' if kind == 'weekly' }}">Weekly</a>
+  <a href="?type=monthly" class="{{ 'on' if kind == 'monthly' }}">Monthly</a>
+</div>
+<form class="filters" method="get" style="margin-bottom:18px">
+  <input type="hidden" name="type" value="{{ kind }}">
+  {% if kind == 'monthly' %}
+    <input type="month" name="value" value="{{ value or (report.start.strftime('%Y-%m') if report else thisMonth) }}" max="{{ thisMonth }}">
+  {% else %}
+    <input type="date" name="value" value="{{ value or (report.start.isoformat() if report else today) }}" max="{{ today }}">
+  {% endif %}
+  <button class="btn" type="submit">Generate report</button>
+  {% if kind == 'weekly' %}<span class="hint" style="align-self:center">Any date picks its Monday–Sunday week.</span>{% endif %}
+</form>
+
+{% if report %}
+<h2 style="font-size:18px; margin:0 0 12px">{{ report.title }}</h2>
+{% set labels = {'logins': 'Logins', 'newAccounts': 'New accounts', 'newIDPs': 'New projects', 'views': 'Project views', 'shortlists': 'Shortlists'} %}
+<div class="report-tiles">
+  {% for key, label in labels.items() %}
+  {% set ch = report.change(key) %}
+  <div class="card tile">
+    <div class="muted">{{ label }}</div>
+    <div class="num">{{ report.totals[key] }}</div>
+    <div class="delta {{ 'up' if ch and ch > 0 else ('down' if ch and ch < 0 else '') }}">
+      {% if ch is none %}—{% else %}{{ '+' if ch > 0 }}{{ ch }}% vs previous {{ 'day' if kind == 'daily' else ('week' if kind == 'weekly' else 'month') }}{% endif %}
+    </div>
+  </div>
+  {% endfor %}
+  <div class="card tile"><div class="muted">Active users</div><div class="num">{{ report.activeUsers }}</div><div class="delta">distinct accounts that logged in</div></div>
+</div>
+
+{% if kind != 'daily' %}
+<div class="card" style="margin-top:18px">
+  <h3 style="margin-top:0">Project views per day</h3>
+  <div class="bars">
+    {% for d in report.days %}
+    <div class="bar" title="{{ d.day }}: {{ d.views }} views">
+      <div class="fill" style="height:{{ (d.views / report.peakViews * 100)|round }}%"></div>
+      <div class="lbl">{{ d.day.strftime('%a' if kind == 'weekly' else '%d') }}</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<div class="two-col" style="margin-top:18px; grid-template-columns:1fr 1fr">
+  <div class="card">
+    <h3 style="margin-top:0">Most viewed projects</h3>
+    {% if report.topIDPs %}
+    <table><tbody>{% for t in report.topIDPs %}<tr><td>{{ t.title }}<div class="muted" style="font-size:13px">{{ t.designer }}</div></td><td class="nowrap">{{ t.views }} view{{ '' if t.views == 1 else 's' }}</td></tr>{% endfor %}</tbody></table>
+    {% else %}<p class="muted">No project views in this period.</p>{% endif %}
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Most viewed categories</h3>
+    {% if report.topCategories %}
+    <table><tbody>{% for t in report.topCategories %}<tr><td>{{ t.name }}</td><td class="nowrap">{{ t.views }} view{{ '' if t.views == 1 else 's' }}</td></tr>{% endfor %}</tbody></table>
+    {% else %}<p class="muted">No category activity in this period.</p>{% endif %}
+  </div>
+</div>
+{% endif %}
+{% endblock %}

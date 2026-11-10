@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Update' if profile else 'Create' }} profile{% endblock %}
+{% block content %}
+{% if profile %}
+<p><a href="{{ url_for('user_profile.displayProfileDetail', profileId=profile.profileId) }}">← Back to profile</a></p>
+<h1>Update user profile</h1>
+<p class="sub">{{ profile.profileName }} · profile #{{ profile.profileId }}</p>
+{% else %}
+<p><a href="{{ url_for('user_profile.displayProfileList') }}">← All profiles</a></p>
+<h1>Create user profile</h1>
+<p class="sub">A profile groups accounts and decides which role they get.</p>
+{% endif %}
+<div class="card" style="max-width:560px">
+  <form method="post">
+    <label for="profileName">Profile name</label>
+    <input id="profileName" name="profileName" maxlength="50" value="{{ form.profileName or '' }}" required>
+    <label for="description">Description</label>
+    <input id="description" name="description" value="{{ form.description or '' }}" required>
+    <label for="role">Role</label>
+    <select id="role" name="role" required {% if profile and profile.isCore() %}disabled{% endif %}>
+      <option value="">Choose a role</option>
+      {% for key, label in roles.items() %}
+        <option value="{{ key }}" {% if form.role == key %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    {% if profile and profile.isCore() %}
+      <input type="hidden" name="role" value="{{ profile.role }}">
+      <p class="muted" style="font-size:13px">Core profiles keep their role.</p>
+    {% endif %}
+    <div class="actions"><button class="btn" type="submit">{{ 'Save changes' if profile else 'Create profile' }}</button></div>
+  </form>
+</div>
+{% endblock %}

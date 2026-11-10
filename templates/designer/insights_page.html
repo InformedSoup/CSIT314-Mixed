@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Project insights{% endblock %}
+{% block content %}
+<h1>Project insights</h1>
+<p class="sub">How customers are responding to your projects</p>
+<div class="row" style="justify-content:flex-start; gap:16px">
+  <div class="card" style="padding:16px 22px"><div class="muted">Total views</div><div style="font-size:28px; font-weight:600">{{ totalViews }}</div></div>
+  <div class="card" style="padding:16px 22px"><div class="muted">Times shortlisted</div><div style="font-size:28px; font-weight:600">{{ totalShortlists }}</div></div>
+</div>
+<div class="tabs">
+  <a href="{{ url_for('tracking.displayInsights', sort='views') }}" class="{{ 'on' if sort != 'shortlists' }}">Most viewed</a>
+  <a href="{{ url_for('tracking.displayInsights', sort='shortlists') }}" class="{{ 'on' if sort == 'shortlists' }}">Most shortlisted</a>
+</div>
+<div class="card">
+  {% if idps %}
+  {% set top = (idps[0].shortlistCount if sort == 'shortlists' else idps[0].viewCount) or 1 %}
+  <table>
+    <thead><tr><th>Project</th><th>Status</th><th class="nowrap">Views</th><th class="nowrap">Shortlisted</th><th style="width:30%"></th></tr></thead>
+    <tbody>
+    {% for idp in idps %}
+      {% set value = idp.shortlistCount if sort == 'shortlists' else idp.viewCount %}
+      <tr>
+        <td><a href="{{ url_for('idp.displayCurrentIDP' if idp.status == 'CURRENT' else 'idp.displayPastIDP', idpId=idp.idpId) }}">{{ idp.title }}</a></td>
+        <td>{{ 'Current' if idp.status == 'CURRENT' else 'Past' }}</td>
+        <td>{{ idp.viewCount }}</td>
+        <td>{{ idp.shortlistCount }}</td>
+        <td><div class="progress"><div style="width:{{ (value / top * 100)|round }}%"></div></div></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">Add projects to start tracking views and shortlists.</div>
+  {% endif %}
+</div>
+{% endblock %}

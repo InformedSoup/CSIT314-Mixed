@@ -1,0 +1,17 @@
+{# Project image: the designer's photo if they gave a link, otherwise a coloured tile for the style. #}
+{% macro idp_image(idp, height=160) -%}
+  {% set palette = ['#c9b79c', '#9fb8ad', '#b7a3a3', '#a3adc2', '#c2b48a', '#a8c0a0', '#c4a58f', '#9eb0b8'] %}
+  {% set colour = palette[(idp.idpId or 0) % palette|length] %}
+  {% if idp.imageUrl %}
+    <div class="idp-img" style="height:{{ height }}px; background-image:url('{{ idp.imageUrl }}'); background-color:{{ colour }}"></div>
+  {% else %}
+    <div class="idp-img placeholder" style="height:{{ height }}px; background:linear-gradient(135deg, {{ colour }}, #efe9df)">
+      <span>{{ idp.designStyle or idp.categoryName or 'Interior' }}</span>
+    </div>
+  {% endif %}
+{%- endmacro %}
+
+{% macro status_badge(idp) -%}
+  {% if idp.status == 'CURRENT' %}<span class="badge CURRENT">In progress · {{ idp.progress }}%</span>
+  {% else %}<span class="badge PAST">Completed{% if idp.completionDate %} · {{ idp.completionDate[:4] }}{% endif %}</span>{% endif %}
+{%- endmacro %}

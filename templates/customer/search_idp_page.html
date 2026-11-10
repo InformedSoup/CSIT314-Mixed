@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% from "_macros.html" import idp_image, status_badge %}
+{% block title %}Find design projects{% endblock %}
+{% block content %}
+<h1>Find design projects</h1>
+<p class="sub">{{ idps|length }} project{{ '' if idps|length == 1 else 's' }}{% if query %} matching “{{ query }}”{% endif %}</p>
+<div class="row">
+  <form class="filters" method="get">
+    <input name="q" value="{{ query }}" placeholder="Style, room, designer..." style="min-width:240px">
+    <select name="category">
+      <option value="">All categories</option>
+      {% for c in categories %}<option value="{{ c.categoryId }}" {% if selectedCategory == c.categoryId|string %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
+    </select>
+    <select name="status">
+      <option value="">Current and past</option>
+      <option value="CURRENT" {% if selectedStatus == 'CURRENT' %}selected{% endif %}>In progress</option>
+      <option value="PAST" {% if selectedStatus == 'PAST' %}selected{% endif %}>Completed</option>
+    </select>
+    <button class="btn" type="submit">Search</button>
+    {% if query or selectedCategory or selectedStatus %}<a class="btn ghost" href="{{ url_for('customer.displaySearchPage') }}">Clear</a>{% endif %}
+  </form>
+</div>
+{% if idps %}
+<div class="grid">
+  {% for idp in idps %}
+  <a class="idp-card" href="{{ url_for('customer.displayIDP', idpId=idp.idpId) }}">
+    {{ idp_image(idp, 150) }}
+    <div class="body">
+      <div class="title">{{ idp.title }}</div>
+      <div class="meta">by {{ idp.designerName }} · {{ idp.categoryName or 'Uncategorised' }}</div>
+      <div>{{ status_badge(idp) }}</div>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card empty">No projects match your search. Try a broader keyword or another category.</div>
+{% endif %}
+{% endblock %}

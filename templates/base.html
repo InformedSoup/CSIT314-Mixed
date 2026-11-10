@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Interior Design Platform{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Interior<span>Match</span></div>
+    {% if session.account_id %}
+    <nav>
+      {% if session.role == 'USER_ADMIN' %}
+        <a href="{{ url_for('user_account.displayUserList') }}">User Accounts</a>
+        <a href="{{ url_for('user_profile.displayProfileList') }}">User Profiles</a>
+      {% elif session.role == 'INTERIOR_DESIGNER' %}
+        <a href="{{ url_for('idp.displayCurrentIDPs') }}">My Projects</a>
+        <a href="{{ url_for('tracking.displayInsights') }}">Insights</a>
+        <a href="{{ url_for('company.displayMyCompanies') }}">My Companies</a>
+      {% elif session.role == 'CUSTOMER' %}
+        <a href="{{ url_for('customer.displaySearchPage') }}">Find Projects</a>
+        <a href="{{ url_for('customer.displayFavourites') }}">My Favourites</a>
+      {% elif session.role == 'PLATFORM_MANAGEMENT' %}
+        <a href="{{ url_for('category.displayCategoryList') }}">IDP Categories</a>
+        <a href="{{ url_for('report.displayReportForm') }}">Reports</a>
+      {% endif %}
+      <span class="who">{{ session.full_name }} · {{ session.profile_name }}</span>
+      <form class="inline" method="post" action="{{ url_for('login.submitLogout') }}">
+        <button class="btn link" type="submit">Log out</button>
+      </form>
+    </nav>
+    {% endif %}
+  </header>
+  <main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

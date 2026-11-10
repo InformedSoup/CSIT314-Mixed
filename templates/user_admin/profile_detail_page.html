@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}{{ profile.profileName }}{% endblock %}
+{% block content %}
+<p><a href="{{ url_for('user_profile.displayProfileList') }}">← All profiles</a></p>
+<h1>{{ profile.profileName }}</h1>
+<p class="sub">Profile #{{ profile.profileId }}{% if profile.isCore() %} · core profile{% endif %}</p>
+<div class="card">
+  <dl class="details">
+    <dt>Description</dt><dd>{{ profile.description }}</dd>
+    <dt>Role granted</dt><dd>{{ profile.roleLabel }}</dd>
+    <dt>Accounts</dt><dd><a href="{{ url_for('user_account.displayUserList', q=profile.profileName) }}">{{ profile.accountCount }}</a></dd>
+    <dt>Status</dt><dd><span class="badge {{ profile.status }}">{{ profile.status }}</span></dd>
+    <dt>Created</dt><dd>{{ profile.createdAt }}</dd>
+  </dl>
+  <div class="actions">
+    <a class="btn" href="{{ url_for('user_profile.displayUpdateForm', profileId=profile.profileId) }}">Update</a>
+    {% if profile.status == 'ACTIVE' %}
+      <form class="inline" method="post" action="{{ url_for('user_profile.suspendProfile', profileId=profile.profileId) }}"
+            onsubmit="return confirm('Suspend this profile? Accounts under it will not be able to log in until it is reactivated.');">
+        <button class="btn danger" type="submit">Suspend</button>
+      </form>
+    {% else %}
+      <form class="inline" method="post" action="{{ url_for('user_profile.reactivateProfile', profileId=profile.profileId) }}">
+        <button class="btn ghost" type="submit">Reactivate</button>
+      </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

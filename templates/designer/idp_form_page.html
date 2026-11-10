@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Update' if idp else 'New' }} project{% endblock %}
+{% block content %}
+{% set prefix = 'Current' if kind == 'current' else 'Past' %}
+{% if idp %}
+<p><a href="{{ url_for('idp.display' ~ prefix ~ 'IDP', idpId=idp.idpId) }}">← Back to project</a></p>
+<h1>Update {{ kind }} project</h1>
+<p class="sub">{{ idp.title }}</p>
+{% else %}
+<p><a href="{{ url_for('idp.display' ~ prefix ~ 'IDPs') }}">← Back</a></p>
+<h1>{{ 'New current project' if kind == 'current' else 'Add a past project' }}</h1>
+<p class="sub">{{ 'Showcase ongoing work to potential clients.' if kind == 'current' else 'Add a finished project to your portfolio.' }}</p>
+{% endif %}
+<div class="card" style="max-width:640px">
+  <form method="post">
+    <label for="title">Title</label>
+    <input id="title" name="title" maxlength="100" value="{{ form.title or '' }}" placeholder="e.g. Tampines 4-room HDB makeover" required>
+    <label for="clientName">Client name</label>
+    <input id="clientName" name="clientName" value="{{ form.clientName or '' }}" required>
+    <label for="categoryId">Category</label>
+    <select id="categoryId" name="categoryId" required>
+      <option value="">Choose a category</option>
+      {% for c in categories %}<option value="{{ c.categoryId }}" {% if form.categoryId|string == c.categoryId|string %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
+    </select>
+    <label for="designStyle">Design style</label>
+    <input id="designStyle" name="designStyle" value="{{ form.designStyle or '' }}" placeholder="e.g. Japandi with warm oak">
+    <label for="description">Description</label>
+    <textarea id="description" name="description" required>{{ form.description or '' }}</textarea>
+    <label for="imageUrl">Photo link <span class="muted">(optional)</span></label>
+    <input id="imageUrl" name="imageUrl" value="{{ form.imageUrl or '' }}" placeholder="https://...">
+    {% if kind == 'current' %}
+    <label for="progress">Progress (%)</label>
+    <input id="progress" name="progress" type="number" min="0" max="99" value="{{ form.progress if form.progress is not none else 0 }}" required>
+    <p class="hint">Use “Mark completed” on the project page when it's done.</p>
+    {% else %}
+    <label for="completionDate">Completion date</label>
+    <input id="completionDate" name="completionDate" type="date" max="{{ today }}" value="{{ form.completionDate or '' }}" required>
+    {% endif %}
+    <div class="actions"><button class="btn" type="submit">{{ 'Save changes' if idp else ('Create project' if kind == 'current' else 'Add to portfolio') }}</button></div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Update' if category else 'Create' }} category{% endblock %}
+{% block content %}
+{% if category %}
+<p><a href="{{ url_for('category.displayCategoryDetails', categoryId=category.categoryId) }}">← Back to category</a></p>
+<h1>Update IDP category</h1>
+<p class="sub">{{ category.name }}</p>
+{% else %}
+<p><a href="{{ url_for('category.displayCategoryList') }}">← All categories</a></p>
+<h1>Create IDP category</h1>
+<p class="sub">Designers file their projects under categories; customers filter by them.</p>
+{% endif %}
+<div class="card" style="max-width:560px">
+  <form method="post">
+    <label for="name">Category name</label>
+    <input id="name" name="name" maxlength="40" value="{{ form.name or '' }}" placeholder="e.g. Scandinavian" required>
+    <label for="description">Description</label>
+    <input id="description" name="description" value="{{ form.description or '' }}" required>
+    <div class="actions"><button class="btn" type="submit">{{ 'Save changes' if category else 'Create category' }}</button></div>
+  </form>
+</div>
+{% endblock %}
