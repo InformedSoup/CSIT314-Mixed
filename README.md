@@ -141,3 +141,5 @@ Design choices worth knowing for the demo:
 - Refreshing a project page within 30 minutes does not add another view, so view counts stay honest.
 - Reports for a period still in progress compare against the same number of days of the previous period.
 - A category can only be deleted when no projects use it.
+
+Customers can save projects to a favourites list (user story #35).
