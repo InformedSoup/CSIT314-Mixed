@@ -33,20 +33,3 @@ jobs:
         with:
           name: test-results
           path: test-results.xml
-
-  deploy:
-    name: Deploy to Render
-    needs: test                     # only runs if every test passed
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger Render deploy
-        env:
-          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
-        run: |
-          if [ -z "$RENDER_DEPLOY_HOOK" ]; then
-            echo "RENDER_DEPLOY_HOOK secret not set - skipping deploy."
-            exit 0
-          fi
-          curl -fsS -X POST "$RENDER_DEPLOY_HOOK"
-          echo "Deploy triggered."
